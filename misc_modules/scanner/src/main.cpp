@@ -1,3 +1,4 @@
+#include <chrono>
 #include <imgui.h>
 #include <module.h>
 #include <gui/gui.h>
