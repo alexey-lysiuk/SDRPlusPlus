@@ -54,7 +54,7 @@ public:
         config.release();
         select(devSerial);
 
-        sigpath::sourceManager.registerSource("FobosSDR", &handler);
+        sigpath::sourceManager.registerSource("FobosSDR Agile", &handler);
     }
 
     void postInit() {}
@@ -239,12 +239,12 @@ private:
     static void menuSelected(void* ctx) {
         FobosSDRAgileSourceModule* _this = static_cast<FobosSDRAgileSourceModule*>(ctx);
         core::setInputSampleRate(_this->sampleRate);
-        flog::info("FobosSDRSourceModule '{0}': Menu Select!", _this->name);
+        flog::info("FobosSDRAgileSourceModule '{0}': Menu Select!", _this->name);
     }
 
     static void menuDeselected(void* ctx) {
         FobosSDRAgileSourceModule* _this = static_cast<FobosSDRAgileSourceModule*>(ctx);
-        flog::info("FobosSDRSourceModule '{0}': Menu Deselect!", _this->name);
+        flog::info("FobosSDRAgileSourceModule '{0}': Menu Deselect!", _this->name);
     }
 
     static void start(void* ctx) {
@@ -307,7 +307,7 @@ private:
         _this->workerThread = std::thread(&FobosSDRAgileSourceModule::worker, _this);
 
         _this->running = true;
-        flog::info("FobosSDRSourceModule '{0}': Start!", _this->name);
+        flog::info("FobosSDRAgileSourceModule '{0}': Start!", _this->name);
     }
 
     static void stop(void* ctx) {
@@ -337,7 +337,7 @@ private:
         // Close the device
         fobos_sdr_close(_this->openDev);
 
-        flog::info("FobosSDRSourceModule '{0}': Stop!", _this->name);
+        flog::info("FobosSDRAgileSourceModule '{0}': Stop!", _this->name);
     }
 
     static void tune(double freq, void* ctx) {
@@ -352,7 +352,7 @@ private:
             }
         }
         _this->freq = freq;
-        flog::info("FobosSDRSourceModule '{0}': Tune: {1}!", _this->name, freq);
+        flog::info("FobosSDRAgileSourceModule '{0}': Tune: {1}!", _this->name, freq);
     }
 
     static void menuHandler(void* ctx) {
@@ -362,7 +362,7 @@ private:
 
         SmGui::FillWidth();
         SmGui::ForceSync();
-        if (SmGui::Combo(CONCAT("##_fobossdr_dev_sel_", _this->name), &_this->devId, _this->devices.txt)) {
+        if (SmGui::Combo(CONCAT("##_fobossdr_agile_dev_sel_", _this->name), &_this->devId, _this->devices.txt)) {
             _this->select(_this->devices.key(_this->devId));
             core::setInputSampleRate(_this->sampleRate);
             config.acquire();
@@ -370,7 +370,7 @@ private:
             config.release(true);
         }
 
-        if (SmGui::Combo(CONCAT("##_fobossdr_sr_sel_", _this->name), &_this->srId, _this->samplerates.txt)) {
+        if (SmGui::Combo(CONCAT("##_fobossdr_agile_sr_sel_", _this->name), &_this->srId, _this->samplerates.txt)) {
             _this->sampleRate = _this->samplerates.value(_this->srId);
             core::setInputSampleRate(_this->sampleRate);
             if (!_this->selectedSerial.empty()) {
@@ -383,7 +383,7 @@ private:
         SmGui::SameLine();
         SmGui::FillWidth();
         SmGui::ForceSync();
-        if (SmGui::Button(CONCAT("Refresh##_fobossdr_refr_", _this->name))) {
+        if (SmGui::Button(CONCAT("Refresh##_fobossdr_agile_refr_", _this->name))) {
             _this->refresh();
             _this->select(_this->selectedSerial);
             core::setInputSampleRate(_this->sampleRate);
@@ -391,7 +391,7 @@ private:
 
         SmGui::LeftLabel("Antenna Port");
         SmGui::FillWidth();
-        if (SmGui::Combo(CONCAT("##_fobossdr_port_", _this->name), &_this->portId, _this->ports.txt)) {
+        if (SmGui::Combo(CONCAT("##_fobossdr_agile_port_", _this->name), &_this->portId, _this->ports.txt)) {
             if (!_this->selectedSerial.empty()) {
                 config.acquire();
                 config.conf["devices"][_this->selectedSerial]["port"] = _this->ports.key(_this->portId);
@@ -403,7 +403,7 @@ private:
 
         SmGui::LeftLabel("Clock Source");
         SmGui::FillWidth();
-        if (SmGui::Combo(CONCAT("##_fobossdr_clk_", _this->name), &_this->clkSrcId, _this->clockSources.txt)) {
+        if (SmGui::Combo(CONCAT("##_fobossdr_agile_clk_", _this->name), &_this->clkSrcId, _this->clockSources.txt)) {
             if (_this->running) {
                 fobos_sdr_set_clk_source(_this->openDev, _this->clockSources[_this->clkSrcId]);
             }
@@ -417,7 +417,7 @@ private:
         if (_this->port == PORT_RF) {
             SmGui::LeftLabel("LNA Gain");
             SmGui::FillWidth();
-            if (SmGui::SliderInt(CONCAT("##_fobossdr_lna_gain_", _this->name), &_this->lnaGain, FOBOS_LNA_GAIN_MIN, FOBOS_LNA_GAIN_MAX)) {
+            if (SmGui::SliderInt(CONCAT("##_fobossdr_agile_lna_gain_", _this->name), &_this->lnaGain, FOBOS_LNA_GAIN_MIN, FOBOS_LNA_GAIN_MAX)) {
                 if (_this->running) {
                     fobos_sdr_set_lna_gain(_this->openDev, _this->lnaGain);
                 }
@@ -430,7 +430,7 @@ private:
 
             SmGui::LeftLabel("VGA Gain");
             SmGui::FillWidth();
-            if (SmGui::SliderInt(CONCAT("##_fobossdr_vga_gain_", _this->name), &_this->vgaGain, FOBOS_VGA_GAIN_MIN, FOBOS_VGA_GAIN_MAX)) {
+            if (SmGui::SliderInt(CONCAT("##_fobossdr_agile_vga_gain_", _this->name), &_this->vgaGain, FOBOS_VGA_GAIN_MIN, FOBOS_VGA_GAIN_MAX)) {
                 if (_this->running) {
                     fobos_sdr_set_vga_gain(_this->openDev, _this->vgaGain);
                 }
@@ -536,7 +536,7 @@ MOD_EXPORT void _INIT_() {
     json def = json({});
     def["devices"] = json({});
     def["device"] = "";
-    config.setPath(core::args["root"].s() + "/fobossdr_config.json");
+    config.setPath(core::args["root"].s() + "/fobossdr_agile_config.json");
     config.load(def);
     config.enableAutoSave();
 }
